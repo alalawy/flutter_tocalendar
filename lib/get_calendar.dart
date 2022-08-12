@@ -6,9 +6,11 @@ import 'package:flutter_tocalendar/widgets/custom_area.dart';
 import 'package:flutter_tocalendar/widgets/date_area.dart';
 
 class ToCalendarWidget extends StatefulWidget {
-  ToCalendarWidget({Key? key, this.customArea}) : super(key: key);
+  ToCalendarWidget({Key? key, this.customArea, this.defaultOnPressed})
+      : super(key: key);
 
   List<CustomArea>? customArea;
+  VoidCallback? defaultOnPressed;
 
   @override
   State<ToCalendarWidget> createState() => _ToCalendarWidgetState();
@@ -23,6 +25,10 @@ class _ToCalendarWidgetState extends State<ToCalendarWidget> {
   void initState() {
     year = DateTime.now().year;
     month = DateTime.now().month;
+
+    if (widget.defaultOnPressed == null) {
+      widget.defaultOnPressed = () {};
+    }
 
     dateArr = Helper(year: year, month: month).getCal();
     super.initState();
@@ -112,8 +118,9 @@ class _ToCalendarWidgetState extends State<ToCalendarWidget> {
         _dataRow.add(DateArea(
           childBack: _dataArea.isNotEmpty ? _dataArea.first.child : Container(),
           child: TextButton(
-            onPressed:
-                _dataArea.isNotEmpty ? _dataArea.first.onPressed : () => () {},
+            onPressed: _dataArea.isNotEmpty
+                ? _dataArea.first.onPressed
+                : widget.defaultOnPressed,
             child: Text(
               element1.day.toString(),
               style: TextStyle(
